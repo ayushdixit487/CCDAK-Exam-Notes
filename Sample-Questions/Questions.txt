@@ -1,0 +1,53 @@
+1. Kafka Theory
+Kafka is a …. ?
+pub-sub system
+Mostly Kafka is written in which language?
+Scala
+Which errors are retriable from Kafka Producer?
+LEADER_NOT_AVAILABLE, NOT_LEADER_FOR_PARTITION, REBALANCE_IN_PROGRESS
+What is a generic unique id which can be used for a messages received from a consumer?
+Topic + Partition + Offset
+
+2. Kafka Streams
+To transform data from a Kafka topic to another one, You should use?
+Kafka Streams
+Which of the Kafka Stream operators are stateful?
+Which of the Kafka Stream operators are stateless?
+Which window is not having gap?
+Which Kafka Stream joins doesn’t require co-partition of data?
+KStream-to-GlobalKTable
+Which Kafka Stream joins is always windowed join?
+KStream-to-KStream
+What is the output of KStream-to-KTable join?
+KStream
+
+
+Which of the following is not a primitive type of Avro?
+Which of the following in not a complex type of Avro?
+Which of the following is not a required field in Avro Schema?
+Delete a field without default value in Avro schema is …… compatibility?
+backward
+Adding a field to record without default value is …… schema evolution?
+forward
+In Avro, removing or adding a field that has a default value is a …… schema evolution?
+full
+What client protocols are supported for the schema registry?
+HTTP, HTTPS
+Where are Avro schema stored in Confluent Schema Registry?
+_schemas Kafka topic
+
+
+4. Confluent KSQL
+is KSQL ANSI SQL Compliant?
+No
+What Java library is KSQL based on?
+Kafka Streams
+
+
+5. Kafka Security
+What are the valid authentication mechanism in KAFKA?
+SSL
+SASL/GSSAPI (Kerberos)
+SASL/PLAIN
+SASL/SCRAM-SHA-256 and SASL/SCRAM-SHA-512
+SASL/OAUTHBEARER
