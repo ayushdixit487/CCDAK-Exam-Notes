@@ -1,0 +1,69 @@
+Kafka Streams
+
+Kafka Streams is used for building streaming applications which transform data of one Kafka topics and feeds to another Kafka topic.
+
+1. Stateless Operators
+branch
+filter
+inverseFilter
+flatMap
+flatMapValues
+foreach
+groupByKey
+groupBy
+map
+mapValues
+2. Stateful Operators
+join
+aggregate
+count
+reduce
+windowing
+3. Window
+1) Tumbling window
+Time based, Fixed Size, Non overlapping, Gap less windows
+For e.g. if window-size=5min and advance-interval =5min then it looks like [0-5min] [5min-10min] [10min-15min]…..
+2) Hopping window
+Time based, Fixed Size, Overlapping windows
+For e.g. if widow-size=5min and advance-interval=3min then it looks like [0-5min] [3min-8min] [6min-11min]……
+3) Sliding window
+Fixed size overlapping window that works on the difference between record timestamp
+Used only for join operation
+4) Session window
+Session based, Dynamically sized, Non overlapping, Data driven window.
+Used to aggregate key based events into session.
+For more information, refer Apache Kafka Documentation on windowing
+
+4. SerDes data types
+Kafka stream operations require SerDes (Serializer/Deserializer) to identify data type.
+
+byte[]
+ByteBuffer
+Double
+Integer
+Long
+String
+5. Streams DSL
+1) KStream
+Abstraction of record stream from subset of partitions of topic
+In database table analogy, interpreted as INSERT statement
+In an e-commerce application, any type of transactions like purchase, payment should be modeled as KStream
+2) KTable
+Abstraction of changelog stream from subset of partitions of topic
+In database table analogy, interpreted as UPDATE statement
+In an e-commerce application, mostly static data like inventory list, customer list and aggregated data like total sales should be modeled as KTable
+3) GlobalKTable
+Abstraction of changelog stream from all partitions of topic
+In database table analogy, interpreted as UPDATE statement
+For more information, refer Apache Kafka Documentation on stream DSL
+
+6. Join Operands
+Join Operands	Output	Type	co-partition required	Join Type
+KStream-to-KStream	KStream	Windowed	Yes	key and window based
+KTable-to-KTable	KTable	Non-windowed	Yes	key or foreign-key based
+KStream-to-KTable	KStream	Non-windowed	Yes	key based
+KStream-to-GlobalKTable	KStream	Non-windowed	No	key or foreign-key based
+co-partition
+co-partition means both the left and right join operand topics must have same number of partitions.
+
+A join between a topic A ( 5 parition ) and topic B (3 partition) is possible using KStream-to-GlobalKTrade since it does not require co-partition.
