@@ -1,0 +1,42 @@
+Consumer
+Per thread one consumer is the rule. Consumer must not be multi threaded.
+Each consumer is assigned to different partition in same consumer group.
+If there are 5 consumers of same consumer group consuming from a topic with 10 partition then 2 partitions will be assigned to each consumer and no consumer will remain idle.
+If there are 10 consumers of same consumer group consuming from a topic with 5 partition then 5 partition will be assigned to 5 consumers and rest 5 consumers will remain idle.
+records-lag-max (monitoring metrics) The maximum lag in terms of number of records for any partition in this window. An increasing value over time is your best indication that the consumer group is not keeping up with the producers.
+
+Consumer Group
+If two applications want to process all the messages independently from a kafka topic having 4 partition, then you should create 2 consumer groups with 4 consumers in each group for optimal performance.
+Consumer Offset
+When consumer in a group has processed the data received from Kafka, it commits the offset in Kafka topic named _consumer_offset which is used when a consumer dies, it will be able to read back from where it left off.
+
+Delivery Semantics
+At most once Offset are committed as soon as message batch is received. If the processing goes wrong, the message will be lost (it won’t be read again)
+At least once (default) Offset are committed after the message is processed. If the processing goes wrong, the message will be read again. This can result in duplicate processing of message.
+Make sure your processing is idempotent. (i.e. re-processing the message won’t impact your systems). For most of the application, we use this and ensure processing are idempotent.
+Exactly once Can only be achieved for Kafka=>Kafka workflows using Kafka Streams API. For Kafka=>Sink workflows, use an idempotent consumer.
+
+Consumer Offset commit strategy
+enable.auto.commit=true & synchronous processing of batches with auto commit, offset will be committed automatically for you at regular interval (auto.commit.interval.ms=5000 by default) every time you call .poll(). If you don’t use synchronous processing, you will be in “at most once” behavior because offsets will be committed before your data is processed.
+enable.auto.commit=false & manual commit of offsets (recommended)
+
+Consumer Offset reset behavior
+auto.offset.reset=latest will read from the end of the log
+auto.offset.reset=earliest will read from the start of the log
+auto.offset.reset=none will throw exception of no offset is found
+Consumer offset can be lost if hasn’t read new data in 7 days. This can be controlled by broker setting offset.retention.minutes
+
+Consumer Poll Behavior
+fetch.min.bytes = 1 (default), Control how much data you want to pull at least on each request. Help improving throughput and decreasing request number. At the cost of latency.
+max.poll.records = 500 (default), Controls how many records to receive per poll request. Increase if your messages are very small and have a lot of available RAM.
+max.partition.fetch.bytes = 1MB (default), Maximum data returned by broker per partition. If you read from 100 partition, you will need a lot of memory (RAM)
+fetch.max.bytes = 50MB (default), Maximum data returned for each fetch request (covers multiple partition). Consumer performs multiple fetches in parallel.
+
+Consumer Heartbeat Thread
+Heartbeat mechanism is used to detect if consumer application in dead.
+session.timeout.ms=10s (default), If heartbeat is not sent in 10 second period, the consumer is considered dead. Set lower value to faster consumer rebalances
+heartbeat.interval.ms=3s (default), Heartbeat is sent in every 3 seconds interval. Usually 1/3rd of session.timeout.ms
+
+Consumer Poll Thread
+Poll mechanism is also used to detect if consumer application is dead.
+max.poll.interval.ms = 5min (default), Max amount of time between two .poll() calls before declaring consumer dead. If processing of message batch takes more time in general in application then should increase the interval.
