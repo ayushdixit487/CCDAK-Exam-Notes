@@ -1,0 +1,52 @@
+① Start a zookeeper at default port 2181
+
+$bin/zookeeper-server-start.sh config/zookeeper.properties
+② Start a kafka server at default port 9092
+
+$bin/kafka-server-start.sh config/server.properties
+③ Create a kafka topic ‘my-first-topic’ with 3 partitions and 3 replicas
+
+$bin/kafka-topics.sh --zookeeper localhost:2181 --topic my-first-topic --create --replication-factor 3 --partitions 3
+④ List all kafka topics
+
+$bin/kafka-topics.sh --zookeeper localhost:2181 --list
+⑤ Describe kafka topic ‘my-first-topic’
+
+$bin/kafka-topics.sh --zookeeper localhost:2181 --topic my-first-topic --describe
+⑥ Delete kafka topic ‘my-first-topic’
+
+$bin/kafka-topics.sh --zookeeper localhost:2181 --topic my-first-topic --delete
+Note: This will have no impact if delete.topic.enable is not set to true
+
+⑦ Find out all the partitions without a leader
+
+$bin/kafka-topics.sh --zookeeper localhost:2181 --describe --unavailable-partitions
+⑧ Produce messages to Kafka topic my-first-topic
+
+$bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-first-topic --producer-property acks=all 
+> message 1  
+> message 2  
+> ^C
+⑨ Start Consuming messages from kafka topic my-first-topic
+
+$bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-first-topic --from-beginning
+> message 1  
+> message 2
+⑩ Start Consuming messages in a consumer group from kafka topic my-first-topic
+
+$bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-first-topic --group my-first-consumer-group --from-beginning
+⑪ List all consumer groups
+
+$bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+⑫ Describe consumer group
+
+$bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe -group my-first-consumer-group
+⑬ Reset offset of consumer group to replay all messages
+
+$bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe -group my-first-consumer-group --reset-offsets --to-earliest --execute --topic my-first-topic
+⑭ Shift offsets by 2 (forward) as another strategy
+
+bin/kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-consumer-group --reset-offsets --shift-by 2 --execute --topic my-first_topic
+⑮ Shift offsets by 2 (backward) as another strategy
+
+bin/kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-consumer-group --reset-offsets --shift-by -2 --execute --topic my-first
