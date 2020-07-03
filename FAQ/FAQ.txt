@@ -1,0 +1,11 @@
+1. Prepare well for the exam as it verifies your theoretical as well as practical understanding of Kafka.
+2. At least 40-50 hours of preparation is required.
+3. You can register online and schedule exam on the Examity site. I suggest to set a goal of 1 to 2 months for exam preparation and register accordingly.
+4. Confluent kafka certification price cost at $150 for one attempt. You need to pay the fee again in order to retake exam after a gap of at least 14 days.
+5. You need to answer 60 multiple-choice questions in 90 minutes from your laptop (with webcam) under the supervision of online proctor.
+6. There is no negative scoring so try to answer as many questions as possible.
+7. There is no mention of number of questions need to be correct in order to pass the exam. Result will be shown immediately (PASS or FAIL) at the end of exam. No scoring or percentage is provided.
+8. You will receive a certificate similar to my CCDAK certificate after passing the exam. What an achievement !!!
+9. The certification expires after two years but you can still brag about it ;)
+10. Don’t waste time searching for CCDAK Certification Dumps. I have done that already and they don’t exist as per my knowledge✱
+11. If you are looking for Free Kafka Certifications. I’m sorry to say, they don’t exist as well
