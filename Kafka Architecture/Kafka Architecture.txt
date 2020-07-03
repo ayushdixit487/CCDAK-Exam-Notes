@@ -1,0 +1,52 @@
+Cluster
+Cluster is group of Kafka brokers.
+
+Rack
+A racks belongs to a cluster.
+A broker belongs to a rack when property broker.rack=<rack-id> is specified at broker level. This enables the rack awareness feature which spreads replicas of the same partition across different racks.
+Let’s say you have 6 brokers and 2 racks. Brokers 1, 2, 3 are on the rack_1, and brokers 4, 5, 6 are on rack_2.
+Now when you create a topic with 6 partition, instead of assigning broker to partition in order from 1, 2, 3, 4, 5, 6, each partition is assigned to each rack repeatedly i.e. 1, 4, 2, 5, 3, 6.
+
+Broker
+Every broker in Kafka is a bootstrap server which knows about all brokers, topics and partitions (metadata) that means Kafka client (e.g. producer,consumer etc) only need to connect to one broker in order to connect to entire cluster.
+At all times, only one broker should be the controller, and one broker must always be the controller in the cluster
+
+Topic
+Kafka takes bytes as input without even loading them into memory (that’s called zero copy)
+Brokers have defaults for all the topic configuration parameters
+
+Partition
+Topic can have one or more partition. One partition is a leader while the others are replica.
+It is not possible to delete a partition of topic once created.
+Order is guaranteed within the partition and once data is written into partition, its immutable!
+If producer writes at 1 GB/sec and consumer consumes at 250MB/sec then requires 4 partition!
+
+Segment
+Partitions are made of segments (.log files)
+At a time only one segment is active in a partition
+log.segment.bytes = 1 GB (default), Max size of a single segment in bytes
+log.segment.ms = 1 week (default), Time kafka will wait before closing the segment if not full
+Segment come with two indexes (files):-
+An offset to position index (.index file)
+Allows kafka where to read to find a message
+A timestamp to offset index (.timeindex file)
+Allows kafka to find a message with a timestamp
+log.cleanup.policy = delete (Kafka default for all user topics), Delete data based on age of data (default is 1 week)
+log.cleanup.policy = compact, Delete based on keys of your messages. Will delete old duplicate keys after the active segment is committed. (Kafka default for topic __consumer_offsets)
+Log cleanup happen on partition segments. Smaller/more segments means the log cleanup will happen more often!
+The cleaner checks for work every 15 seconds (log.cleaner.backoff.ms)
+log.retention.hours = 1 week (default), number of hours to keep data for
+log.retention.bytes = -1 (infinite default), max size in bytes for each partition
+Old segments will be deleted based on log.retention.hours or log.retention.bytes rule
+The offset of message is immutable.
+Deleted records can still be seen by consumers for a period of delete.retention.ms=24 hours (default)
+
+
+Offset
+Partition is having its own offset starting from 0.
+
+
+Topic Replication
+Replication factor = 3 and partition = 2 means there will be total 6 partition distributed across Kafka cluster. Each partition will be having 1 leader and 2 ISR (in-sync replica).
+Broker contains leader partition called leader of that partition and only leader can receive and serve data for partition.
+Replication factor can not be greater then number of broker in the kafka cluster. If topic is having a replication factor of 3 then each partition will live on 3 different brokers.
