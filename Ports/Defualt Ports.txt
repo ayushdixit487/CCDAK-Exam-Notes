@@ -1,0 +1,8 @@
+Default Ports
+Zookeeper Client Port: 2181
+Zookeeper Leader Port: 3888
+Zookeeper Election Port (Peer port): 2888
+Broker: 9092
+REST Proxy: 8082
+Schema Registry: 8081
+KSQL: 8088
