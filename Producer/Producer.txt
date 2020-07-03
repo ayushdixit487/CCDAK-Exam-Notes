@@ -1,0 +1,50 @@
+Producer
+Kafka Producer automatically recover from following retriable errors:
+LEADER_NOT_AVAILABLE
+NOT_LEADER_FOR_PARTITION
+REBALANCE_IN_PROGRESS
+Kafka Producer throw error for following non retriable errors:
+MESSAGE_TOO_LARGE
+
+
+If you send a message of size 3 MB to a topic with default message size configuration. Then producer will throw MessageSizeTooLarge exception immediately since it is not a retriable exception.
+When produce to a topic which doesn’t exist and auto.create.topic.enable=true then kafka creates the topic automatically with the broker/topic settings num.partition and default.replication.factor
+
+
+Producer Acknowledgment
+acks=0 Producer do not wait for ack ( possible data loss )
+acks=1 Producer wait for leader ack ( limited data loss )
+acks=all Producer wait for leader+replica ack ( no data loss )
+acks=all must be used in conjunction with min.insync.replicas ( can be set at broker or topic level )
+min.insync.replica only matters if acks=all
+acks=all, min.insync.replica=2 implies that at least 2 brokers that are ISR (including leader) must acknowledge
+replication.factor=3, acks=all, min.insync.replicas=2 can only tolerate 1 broker going down, otherwise the producer will receive an exception NOT_ENOUGH_REPLICAS on send
+acks=all, min.insync.replica=1 implies that at least 1 brokers that is ISR (including leader) must acknowledge
+A kafka topic with replication.factor=3, acks=all, min.insync.replicas=1, maximum number of 2 brokers can go down so that a producer can still produce to the topic.
+
+
+
+Producer Configuration
+Mandatory properties to configure Kafka producer is as follows:
+bootstrap.servers
+key.serializer
+value.serializer
+Safe Producer Configuration
+min.insync.replicas=2 (set at broker or topic level)
+retries=MAX_INT number of reties by producer in case of transient failure/exception. (default is 0)
+max.in.flight.per.connection number=5 number of producer request can be made in parallel (default is 5)
+acks=all
+enable.idempotence=true producer send producerId with each message to identify for duplicate msg at kafka end. When kafka receives duplicate message with same producerId which it already committed. It do not commit it again and send ack to producer (default is false)
+High Throughput Producer using compression and batching
+compression.type=snappy value can be none(default), gzip, lz4, snappy. Compression is enabled at the producer level and doesn’t require any config change in broker or consumer Compression is more effective in case of bigger batch of messages being sent to kafka
+linger.ms=20 Number of millisecond a producer is willing to wait before sending a batch out. (default 0). Increase linger.ms value increase the chance of batching.
+batch.size=32KB or 64KB Maximum number of bytes that will be included in a batch (default 16KB). Any message bigger than the batch size will not be batched
+Message Key
+
+
+
+Producer can choose to send a key with message.
+If key = null, data is send in round robin
+If key is sent, then all message for that key will always go to same partition. This can be used to order the messages for a specific key since order is guaranteed in same partition.
+Adding a partition to the topic will loose the guarantee of same key go to same partition.
+Keys are hashed using murmur2 algorithm by default.
