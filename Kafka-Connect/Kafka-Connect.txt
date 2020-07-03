@@ -1,0 +1,13 @@
+Kafka Guarantees
+Messages are appended to a topic-partition in the order they are sent
+Consumer read the messages in the order stored in topic-partition
+With a replication factor of N, producers and consumers can tolerate upto N-1 brokers being down
+As long as number of partitions remains constant for a topic ( no new partition), the same key will always go to same partition
+
+Client Bi-Directional Compatibility
+an Older client (1.1) can talk to Newer broker (2.0)
+a Newer client (2.0) can talk to Older broker (1.1)
+
+Kafka Connect
+Source connect Get data from common data source to Kafka for e.g. import data from external database to kafka
+Sink connect Publish data from Kafka to common data source for e.g. export data from Kafka to external database
