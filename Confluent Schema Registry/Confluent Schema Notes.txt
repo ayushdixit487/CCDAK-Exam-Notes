@@ -1,0 +1,29 @@
+
+1. Confluent Schema Notes
+Schema Registry stores all schemas in a Kafka topic _schemas defined by kafkastore.config = _schemas (default) which is a single partition topic with log compacted.
+The default response media type application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json are used in response header.
+HTTP and HTTPS client protocol are supported for schema registry.
+Prefix to apply to metric names for the default JMX reporter kafka.schema.registry
+Default port for listener is 8081
+Confluent support primitive types of null, Boolean, Integer, Long, Float, Double, String, byte[], and complex type of IndexedRecord. Sending data of other types to KafkaAvroSerializer will cause a SerializationException
+
+
+2. Confluent Schema Compatibility Types
+BACKWARD
+Consumer using schema X can process data produced with schema X or X-1. In case of BACKWARD_TRANSITIVE, consumer using schema X can process data produced with all previous schema X, X-1, X-2 and so on
+Delete field without default value (Required field) is allowed. In this case, Consumer ignore this field.
+Add field with default value (Optional field) is allowed. In this case, Consumer will assign default value.
+BACKWARD is default compatibility type in confluent schema registry.
+There is no assurance that consumers using older schema can read data produced using the new schema. Therefore, upgrade all consumers before you start producing new events.
+FORWARD
+Data produced using schema X can be ready by consumers with schema X or X-1. In case of FORWARD_TRANSITIVE, data produced using schema X can be ready by consumers with all previous schema X, X-1, X-2 and so on
+Add field without default value (Required field) is allowed. In this case, Consumer ignore this field.
+Delete field with default value (Optional field) is allowed. In this case, Consumer will assign default value.
+There is no assurance that consumers using the new schema can read data produced using older schema. Therefore, first upgrade all producers to using the new schema and make sure the data already produced using the older schema are not available to consumers, then upgrade the consumers.
+FULL
+Backward and forward compatible between schema X and X-1. In case of FULL_TRANSITIVE, backward and forward compatible between all previous schema X and X-1 and X-2 and so on
+Modify field with default value (Optional field) is allowed.
+There are assurances that consumers using older schema can read data produced using the new schema and that consumers using the new schema can read data produced using older schema. Therefore, you can upgrade the producers and consumers independently.
+NONE
+Compatibility type means schema compatibility checks are disabled.
+Upgrading Consumer or Producer depends. For example, modifying a field type from Number to String. In this case, you will either need to upgrade all producers and consumers to the new schema version at the same time
